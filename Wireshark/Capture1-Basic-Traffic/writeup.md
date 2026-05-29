@@ -2,8 +2,8 @@
 To  analyze real network traffic  using Wireshark and observe how the OSI layer works operate under DNS Resolution ,HTTP,HHTPS, TCP communications
 
 ## Setup
-1.Downloaded Wireshark from Wireshark.org
-2.Used my own machine's traffic to analyze the packets
+1. Downloaded Wireshark from Wireshark.org
+2. Used my own machine's traffic to analyze the packets
 
 ## Steps Used
 ### 1. Generate Traffic
