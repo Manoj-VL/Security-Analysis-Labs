@@ -124,13 +124,56 @@ _"Unlike HTTPS, HTTP traffic on port 80 is completely unencrypted. The full GET 
 
 
 ---
-#### Filter 3 : HTTPS/TLS
-1. Generated a web traffic session by visiting `https://Wwww.example.com`
-2. Captured the packets using Wireshark and selected 7 packets for analyzing
-3. Packets 17,23,24,25,32,33 were selected
+#### Filter 3: HTTPS/TLS
+Setup:
+Visited https://www.example.com and filtered using tcp.port == 49020 to isolate one clean connection.
 
-**Packet 17- SYN ** 
-```
-17 3.320658300 2401:4900:6463:bc05:d488:241b:1ecc:a23d 2606:4700:83b5:72db:f2fd:892:ef6b:ff98 TCP 86 49020 → 443 [SYN] Seq=0 Win=64900 Len=0 MSS=1298 WS=256 SACK_PERM
-```
+#### Phase 1 — TCP 3-Way Handshake
+**Packet 17 — SYN
+Source: My PC (2401:4900:...:a23d) → Destination: example.com server (2606:4700:...:ff98)
+Layer 4: TCP, Src Port 49020 → Dst Port 443
+Flags: SYN — initiating TCP connection
+Seq=0, Win=64900, MSS=1298, WS=256, SACK_PERM
+Purpose: "My machine requesting TCP connection on HTTPS port 443"
 
+**Packet 23 — SYN ACK
+Source: example.com server → Destination: My PC
+Layer 4: TCP, Src Port 443 → Dst Port 49020
+Flags: SYN, ACK — server agrees and acknowledges
+Seq=0, Ack=1, MSS=1298, Win=65535
+Purpose: "Server accepted TCP connection request"
+
+**Packet 24 — ACK
+Source: My PC → Destination: example.com server
+Layer 4: TCP, Src Port 49020 → Dst Port 443
+Flags: ACK — connection established
+Seq=1, Ack=1, Win=66048
+Purpose: "3-way handshake complete — TCP connection established"
+
+#### Phase 2 — TLS Handshake
+**Packet 25 — Client Hello
+Source: My PC → Destination: example.com server
+Layer 5/6: TLSv1.3
+SNI: www.example.com — visible in plain text
+Size: 1962 bytes
+Purpose: "My machine initiating TLS encryption negotiation and identifying target website via SNI"
+
+**Packet 32 — Server Hello + Change Cipher Spec
+Source: example.com server → Destination: My PC
+Layer 5/6: TLSv1.3
+Size: 3972 bytes
+Purpose: "Server confirmed TLS version, selected cipher suite and switched to encrypted communication"
+
+#### Phase 3 — Encrypted Data Delivery
+**Packet 33 — Application Data
+Source: example.com server → Destination: My PC
+Layer 5/6: TLSv1.3
+Size: 422 bytes
+Purpose: "Encrypted webpage content delivered — content completely unreadable in Wireshark"
+
+
+## Observation:
+"HTTPS adds a TLS handshake layer on top of the standard TCP connection. Unlike HTTP where content was fully visible in plain text, HTTPS traffic showed only Application Data at Layer 7 — completely encrypted and unreadable. The SNI field in the Client Hello revealed the destination domain www.example.com in plain text, showing a known privacy limitation of TLS. TLSv1.3 completed the handshake in a single round trip, combining Server Hello and cipher negotiation efficiently. This demonstrates how Layer 4 TCP handles reliable delivery while Layer 5/6 TLS handles encryption and security."
+
+## Screenshot
+<img width="1920" height="1080" alt="TCP, HTTPS" src="https://github.com/user-attachments/assets/d20a00de-e230-4c0d-9a88-b03ac7cbc5d7" />
