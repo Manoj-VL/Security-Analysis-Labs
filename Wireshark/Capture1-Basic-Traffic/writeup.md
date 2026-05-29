@@ -38,6 +38,7 @@ To  analyze real network traffic  using Wireshark and observe how the OSI layer 
 ## Screenshots
 ### DNS Query
 <img width="1920" height="1080" alt="DNS query" src="https://github.com/user-attachments/assets/bc4c8676-4ba5-4033-9231-c150e034d111" />
+
 ### DNS Response
 <img width="1920" height="1080" alt="Dns Response" src="https://github.com/user-attachments/assets/68993d4d-63df-4938-af88-41575d7a8baf" />
 
