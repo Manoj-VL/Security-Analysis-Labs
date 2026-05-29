@@ -3,7 +3,6 @@ To  analyze real network traffic  using Wireshark and observe how the OSI layer 
 
 ## Setup
 1.Downloaded Wireshark from Wireshark.org
-
 2.Used my own machine's traffic to analyze the packets
 
 ## Steps Used
